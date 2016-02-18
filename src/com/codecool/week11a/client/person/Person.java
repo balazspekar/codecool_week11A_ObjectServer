@@ -1,8 +1,11 @@
-package codecool_week11A_ObjectServer;
+package com.codecool.week11a.client.person;
 
-public class Person
+import java.io.Serializable;
+
+public class Person implements Serializable
 {
 
+	private static final long serialVersionUID = 4426605518331866135L;
 	private String firstName;
 	private String lastName;
 	private Gender gender;
@@ -46,6 +49,12 @@ public class Person
 	public void setSalary(int salary)
 	{
 		this.salary = salary;
+	}
+
+	@Override
+	public String toString()
+	{
+		return firstName + " " + lastName + ", Gender: " + gender + ", Salary: " + salary;
 	}
 
 }

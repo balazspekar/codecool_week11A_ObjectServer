@@ -1,4 +1,9 @@
-package codecool_week11A_ObjectServer;
+package com.codecool.week11a.client.helpers;
+
+import com.codecool.week11a.client.product.Book;
+import com.codecool.week11a.client.product.Game;
+import com.codecool.week11a.client.product.Movie;
+import com.codecool.week11a.client.product.Product;
 
 public class IdGenerator
 {

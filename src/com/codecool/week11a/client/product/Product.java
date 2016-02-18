@@ -1,4 +1,7 @@
-package codecool_week11A_ObjectServer;
+package com.codecool.week11a.client.product;
+
+import com.codecool.week11a.client.helpers.IdGenerator;
+import com.codecool.week11a.client.person.Person;
 
 public abstract class Product
 {

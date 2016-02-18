@@ -1,4 +1,6 @@
-package codecool_week11A_ObjectServer;
+package com.codecool.week11a.client.product;
+
+import com.codecool.week11a.client.person.Person;
 
 public class Book extends Product
 {

@@ -1,4 +1,4 @@
-package codecool_week11A_ObjectServer;
+package com.codecool.week11a.client.helpers;
 
 public interface Buyable
 {
