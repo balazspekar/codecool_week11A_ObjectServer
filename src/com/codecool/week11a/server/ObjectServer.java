@@ -1,5 +1,6 @@
 package com.codecool.week11a.server;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.codecool.week11a.client.helpers.Command;
@@ -28,8 +30,8 @@ public class ObjectServer
 			System.out.println("Starting ServerSocket on port " + PORT);
 			System.out.println("Waiting for an incoming connection on " + InetAddress.getLocalHost().getHostAddress());
 			Socket server = serverSocket.accept();
-			ObjectInputStream objectFromClient = new ObjectInputStream(server.getInputStream());
 			ObjectOutputStream objectToClient = new ObjectOutputStream(server.getOutputStream());
+			ObjectInputStream objectFromClient = new ObjectInputStream(server.getInputStream());
 			System.out.println("Client connected");
 
 			while (true)
@@ -39,29 +41,32 @@ public class ObjectServer
 					Object incomingObject = null;
 					incomingObject = objectFromClient.readObject();
 
-					if (incomingObject instanceof Command && ((Command) incomingObject == Command.PUT))
+					if (incomingObject instanceof Command && ((Command) incomingObject == Command.EXIT))
 					{
-						mode = ServerMode.SAVE;
-						System.out.println("Mode set to SAVE");
+						System.out.println("Exit command received, terminating server process");
+						break; // terminating the while loop
+					}
 
-					} else if (incomingObject instanceof Command && ((Command) incomingObject == Command.GET))
+					else if (incomingObject instanceof Command && ((Command) incomingObject == Command.GET))
 					{
 						mode = ServerMode.LOAD;
-						System.out.println("Mode set to LOAD");
-						// Object obj = load();
-						// objectToClient.writeObject(obj);
-					} else if (incomingObject instanceof Command && ((Command) incomingObject == Command.EXIT))
+						System.out.println("Server mode set to LOAD");
+						Object requestedObjectByClient = load();
+						objectToClient.writeObject(requestedObjectByClient);
+					}
+
+					else if (incomingObject instanceof Command && ((Command) incomingObject == Command.PUT))
 					{
-						System.out.println("Exit command received");
-						break;
-					} else if (mode == ServerMode.SAVE)
+						mode = ServerMode.SAVE;
+						System.out.println("Server mode set to SAVE");
+					}
+
+					else if (mode == ServerMode.SAVE)
 					{
 						save(incomingObject);
 						System.out.println("Calling save() method: done");
 					}
-
 				}
-
 			}
 
 			server.close();
@@ -96,7 +101,36 @@ public class ObjectServer
 
 	public List<Object> load()
 	{
-		return null;
+		List<Object> objectList = new ArrayList<Object>();
+
+		try
+		{
+			FileInputStream fis = new FileInputStream("d:\\data.dat");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			Object object;
+
+			try
+			{
+				while ((object = ois.readObject()) != null)
+				{
+					objectList.add(object);
+				}
+			} catch (ClassNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+
+			ois.close();
+			fis.close();
+
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return objectList;
 	}
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException

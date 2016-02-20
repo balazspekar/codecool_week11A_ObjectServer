@@ -24,7 +24,7 @@ public class RentManager
 
 		System.out.print("Populating Person objects: ");
 		jkrowling.setFirstName("JK");
-		jkrowling.setLastName("Lowling");
+		jkrowling.setLastName("Bowling");
 		jkrowling.setGender(Gender.FEMALE);
 		jkrowling.setSalary(9510);
 		asimov.setFirstName("Isaac");
@@ -42,23 +42,33 @@ public class RentManager
 		int port = 7575;
 		Socket client;
 
+		// START PUT (comment/uncomment if necessary)
 		try
 		{
 			client = new Socket(host, port);
 			System.out.println("Connected to server");
-			ObjectOutputStream objectToServer = new ObjectOutputStream(client.getOutputStream());
 			ObjectInputStream objectFromServer = new ObjectInputStream(client.getInputStream());
+			ObjectOutputStream objectToServer = new ObjectOutputStream(client.getOutputStream());
 
+			System.out.println("Sending command PUT");
 			send(objectToServer, Command.PUT);
-			send(objectToServer, jkrowling);
 
-			System.out.println("Closing the connection");
+			System.out.println("Sending object jkrowling");
+			send(objectToServer, jkrowling);
+			System.out.println("Object sent");
+
+			System.out.println("Sending command EXIT");
+			send(objectToServer, Command.EXIT);
+			System.out.println("Server shut down");
+
+			System.out.println("Closing the connection from the client side");
 			client.close();
 			System.out.println("Connection closed");
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		// END PUT (comment/uncomment if necessary)
 
 	}
 
