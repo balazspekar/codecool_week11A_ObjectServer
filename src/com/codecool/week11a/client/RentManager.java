@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import com.codecool.week11a.client.helpers.Buyable;
+import com.codecool.week11a.client.helpers.Command;
 import com.codecool.week11a.client.person.Gender;
 import com.codecool.week11a.client.person.Person;
 
 public class RentManager
 {
-	public static void main(String[] args) throws UnknownHostException, IOException
+	public static void main(String[] args)
 	{
 		System.out.println("--CLIENT\n");
 
@@ -24,7 +24,7 @@ public class RentManager
 
 		System.out.print("Populating Person objects: ");
 		jkrowling.setFirstName("JK");
-		jkrowling.setLastName("Rowling");
+		jkrowling.setLastName("Lowling");
 		jkrowling.setGender(Gender.FEMALE);
 		jkrowling.setSalary(9510);
 		asimov.setFirstName("Isaac");
@@ -40,17 +40,39 @@ public class RentManager
 		System.out.println("Creating the connection");
 		String host = "127.0.0.1";
 		int port = 7575;
-		Socket client = new Socket(host, port);
-		System.out.println("Connected to server");
+		Socket client;
 
-		ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-		ObjectOutputStream objectOutputStream = new ObjectOutputStream(client.getOutputStream());
+		try
+		{
+			client = new Socket(host, port);
+			System.out.println("Connected to server");
+			ObjectOutputStream objectToServer = new ObjectOutputStream(client.getOutputStream());
+			ObjectInputStream objectFromServer = new ObjectInputStream(client.getInputStream());
 
-		objectOutputStream.writeObject(jkrowling);
+			send(objectToServer, Command.PUT);
+			send(objectToServer, jkrowling);
 
-		System.out.println("Closing the connection");
-		client.close();
-		System.out.println("Connection closed");
+			System.out.println("Closing the connection");
+			client.close();
+			System.out.println("Connection closed");
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void send(ObjectOutputStream oos, Object objectToSend)
+	{
+		try
+		{
+			oos.write(0);
+			oos.writeObject(objectToSend);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
 	}
 
 	public static int getBuyableProducts(List<Buyable> buyables)
